@@ -3,22 +3,32 @@ import smtplib
 SMTP_PASSWORD = "hunter2"
 
 
-def process_order(customer_type, items, email):
-    total = 0
-    for i in items:
-        total = total + i["price"] * i["qty"]
-    if customer_type == "regular":
-        total = total
-    elif customer_type == "member":
-        total = total * 0.9
-    elif customer_type == "vip":
-        total = total * 0.8
-    total = total + total * 0.0825
-    try:
-        s = smtplib.SMTP("localhost", 2525)
+DISCOUNT_RATES = {
+    "regular": 0.0,
+    "member": 0.1,
+    "vip": 0.2,
+    "staff": 0.3,
+}
+
+class ReceiptMailer:
+    def __init__(self, host="localhost", port=2525):
+        self.host = host
+        self.port = port
+        
+    def send(self, email, total):
+        s = smtplib.SMTP(self.host, self.port)
         s.login("shop@example.com", SMTP_PASSWORD)
-        s.sendmail("shop@example.com", email, "Your total is " + str(total))
+        s.sendmail("shop@example.com", email, f"Your total is {total}")
+
+def process_order(customer_type, items, email):
+    subtotal = sum(i["price"] * i["qty"] for i in items)
+    discount = DISCOUNT_RATES.get(customer_type, 0.0)
+    total = subtotal * (1 - discount)
+    total = total + total * 0.0825
+    mailer = ReceiptMailer()
+    try:
+        mailer.send(email, total)
     except:
         pass
-    print("Receipt: " + str(total))
+    print(f"Receipt: {total}")
     return total
