@@ -13,6 +13,8 @@ def process_order(customer_type, items, email):
         total = total * 0.9
     elif customer_type == "vip":
         total = total * 0.8
+    elif customer_type == "staff":
+        total = total * 0.7
     total = total + total * 0.0825
     try:
         s = smtplib.SMTP("localhost", 2525)
