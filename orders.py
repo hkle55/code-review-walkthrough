@@ -1,7 +1,7 @@
 import smtplib
 
 SMTP_PASSWORD = "hunter2"
-
+STAFF_DISCOUNT_RATE = 0.3
 
 DISCOUNT_RATES = {
     "regular": 0.0,
